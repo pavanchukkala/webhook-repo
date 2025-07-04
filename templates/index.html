@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webhook Events</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #events { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>📡 GitHub Webhook Activity</h2>
+  <ul id="events"></ul>
+  <script>
+    async function loadEvents() {
+      const res = await fetch('/events');
+      const messages = await res.json();
+      const list = document.getElementById('events');
+      list.innerHTML = messages.map(msg => `<li>${msg}</li>`).join('');
+    }
+    loadEvents();
+    setInterval(loadEvents, 15000);
+  </script>
+</body>
+</html>
