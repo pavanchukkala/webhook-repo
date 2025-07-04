@@ -1,24 +1,44 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Webhook Events</title>
+  <meta charset="UTF-8" />
+  <title>Webhook Dashboard</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    #events { margin-top: 20px; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
   </style>
-</head>
-<body>
-  <h2>📡 GitHub Webhook Activity</h2>
-  <ul id="events"></ul>
   <script>
     async function loadEvents() {
       const res = await fetch('/events');
-      const messages = await res.json();
-      const list = document.getElementById('events');
-      list.innerHTML = messages.map(msg => `<li>${msg}</li>`).join('');
+      const data = await res.json();
+      const tbody = document.getElementById('events');
+      tbody.innerHTML = '';
+      data.forEach(evt => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${evt._id}</td>
+          <td><pre>${JSON.stringify(evt.event, null, 2)}</pre></td>
+          <td>${evt.timestamp}</td>
+        `;
+        tbody.appendChild(row);
+      });
     }
-    loadEvents();
-    setInterval(loadEvents, 15000);
+    window.onload = loadEvents;
   </script>
+</head>
+<body>
+  <h1>📡 Recent Webhook Events</h1>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Payload</th><th>Timestamp</th></tr>
+    </thead>
+    <tbody id="events">
+      <!-- Events will be loaded here -->
+    </tbody>
+  </table>
 </body>
 </html>
